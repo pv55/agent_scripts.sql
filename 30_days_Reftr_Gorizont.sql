@@ -102,5 +102,3 @@ and z.delivery_index <>-1
 Group by l.fleet_gk,l.courier_gk,l.phone,l.driver_name,l.registration_date_key,l.ftp_date_key,l.churn_date,l.ReFTR_date,l.ReFTR_date_plus_1_month,l.last_ride
 Order by l.last_ride desc
     )
-
-
