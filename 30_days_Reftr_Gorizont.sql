@@ -114,7 +114,7 @@ with leads as (
 WITH peoples AS (
 
 Select
-d.fleet_gk as fleet_gk ,
+f1.fleet_gk as fleet_gk ,
 f1.driver_gk as driver_gk ,
 d.phone as phone ,
 d.registration_date_key as registration_date_key ,
@@ -139,7 +139,7 @@ and date(f1.order_date_key) >= date'2020-11-03'
 and date_diff('day',f1.order_date_key, f2.order_date_key) >= 30
 and date_diff('day',f1.order_date_key, f2.order_date_key) <= 59
 
-group by  d.fleet_gk,f1.driver_gk,phone,registration_date_key,driver_name,ftp_date_key,ltp_date_key)
+group by  f1.fleet_gk,f1.driver_gk,phone,registration_date_key,driver_name,ftp_date_key,ltp_date_key)
 
 (Select
 f.fleet_gk as fleet_gk,
