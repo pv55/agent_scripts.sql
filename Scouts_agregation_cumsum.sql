@@ -3,6 +3,13 @@ WITH Payment AS (
 WITH couriers AS (
 
 select
+(case when f1.fleet_gk = 200017083 then 'МСК-Дептакси'
+      when f1.fleet_gk = 200017177 then 'МСК-Шараев'
+      when f1.fleet_gk = 200017412 then 'Казань-Дептакси'
+      when f1.fleet_gk = 200017342 then 'Спб-Дептакси'
+      when f1.fleet_gk = 200017205 then 'Спб-Дептакси'
+      when f1.fleet_gk = 200017203 then 'МСК-Дептакси'
+      end ) city,
 d.driver_gk as driver_gk,
 d.phone as phone,
 (case when d.courier_type is null then 'car' else d.courier_type end ) courier_type,
@@ -62,9 +69,10 @@ and f2.order_status_key = 7
 and f2.cost_exc_vat >=1
 --and a.FTR_plus_30days >= date '2021-02-01'
 
-GROUP by a.driver_gk,a.cost_total,a.courier_type,a.phone,a.driver_name,a.driver_computed_rating,a.fleet_gk,a.driver_status,a.status,a.registration_date_key,a.ftp_date_key_all,a.ftp_date_key_park,a.FTR_plus_30days,a.ltp_date_key))
+GROUP by a.city,a.driver_gk,a.cost_total,a.courier_type,a.phone,a.driver_name,a.driver_computed_rating,a.fleet_gk,a.driver_status,a.status,a.registration_date_key,a.ftp_date_key_all,a.ftp_date_key_park,a.FTR_plus_30days,a.ltp_date_key))
 
-(SELECT s.*,
+(SELECT
+s.*,
 (case when s.ltp_date_different_park >= date '1900-01-01' then (case when date_diff('day', s.ltp_date_different_park,s.ftp_date_key_park) <= 59 then 'NoReFTR' else 'ReFTR' end ) else 'FTR' end) as type_couriers,
 (case when f3.date_pay <> '' then date(f3.date_pay) end) as last_pay,
 (case when f3.date_pay <> '' then cast (f3.cumsum as integer) else 0 end) as last_CumSum,
