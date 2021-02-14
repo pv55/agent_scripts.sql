@@ -84,18 +84,18 @@ s.*,
 
     else (case
 
-    when cast (f3.cumsum as integer) = 1800 then (case when s.All_rides_total >= 30 then cast (f3.cumsum as integer) + 1500 else 0 end)
+    when cast (f3.cumsum as integer) = 1800 then (case when s.All_rides_30_days >= 30 then cast (f3.cumsum as integer) + 1500 else 0 end)
     when cast (f3.cumsum as integer) = 3300 then 0
     when cast (f3.cumsum as integer) = 4000 then 0
-    when ftp_date_key_park <= date '2020-12-20' then (case when s.All_rides_total between 5 and 14 then (case when cast (f3.cumsum as integer) >= 0 then 500 - cast (f3.cumsum as integer) else 500 end) else 0 end )
-    when ftp_date_key_park <= date '2020-12-20' then (case when s.All_rides_total between 15 and 29 then 1800 else 0 end)
-    when ftp_date_key_park <= date '2020-12-20' then (case when s.All_rides_total >= 30 then 3300 else 0 end)
-    when s.All_rides_total <= 4 then 0
+    when ftp_date_key_park <= date '2020-12-20' then (case when s.All_rides_30_days between 5 and 14 then (case when cast (f3.cumsum as integer) >= 0 then 500 - cast (f3.cumsum as integer) else 500 end) else 0 end )
+    when ftp_date_key_park <= date '2020-12-20' then (case when s.All_rides_30_days between 15 and 29 then 1800 else 0 end)
+    when ftp_date_key_park <= date '2020-12-20' then (case when s.All_rides_30_days >= 30 then 3300 else 0 end)
+    when s.All_rides_30_days <= 4 then 0
 
-    when s.All_rides_total between 5 and 14 then (case when cast (f3.cumsum as integer) >= 0 then 500 - cast (f3.cumsum as integer) else 500 end)
-    when s.All_rides_total between 15 and 29 then (case when cast (f3.cumsum as integer) >= 0 then 2100 - cast (f3.cumsum as integer) else 2100 end)
-    when s.All_rides_total between 15 and 29 then (case when cast (f3.cumsum as integer) >= 0 then 2100 - cast (f3.cumsum as integer) else 2100 end)
-    when s.All_rides_total >= 30 then (case when cast (f3.cumsum as integer) >= 0 then 4000 - cast (f3.cumsum as integer) else 4000 end)
+    when s.All_rides_30_days between 5 and 14 then (case when cast (f3.cumsum as integer) >= 0 then 500 - cast (f3.cumsum as integer) else 500 end)
+    when s.All_rides_30_days between 15 and 29 then (case when cast (f3.cumsum as integer) >= 0 then 2100 - cast (f3.cumsum as integer) else 2100 end)
+    when s.All_rides_30_days between 15 and 29 then (case when cast (f3.cumsum as integer) >= 0 then 2100 - cast (f3.cumsum as integer) else 2100 end)
+    when s.All_rides_30_days >= 30 then (case when cast (f3.cumsum as integer) >= 0 then 4000 - cast (f3.cumsum as integer) else 4000 end)
 
     else 0 end ) end) Cumsum
 
