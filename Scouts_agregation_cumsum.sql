@@ -14,7 +14,7 @@ d.driver_gk as driver_gk,
 d.phone as phone,
 (case when d.courier_type is null then 'car' else d.courier_type end ) courier_type,
 d.driver_name as driver_name,
-d.driver_computed_rating as driver_computed_rating,
+cast(d.driver_computed_rating as integer ) as driver_computed_rating,
 f1.fleet_gk as fleet_gk,
 d.driver_status as driver_status,
 (case when d.frozen_comment = 'Unknown' then '' else d.frozen_comment end ) status,
@@ -49,13 +49,13 @@ max (case when a.ftp_date_key_all <> a.ftp_date_key_park then (case when f2.orde
 
 
 count(distinct (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203) and f2.order_date_key between a.ftp_date_key_park and a.ftp_date_key_park + interval '6' day then f2.order_gk end)) rides_7_days,
-sum (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203) and f2.order_date_key between a.ftp_date_key_park and a.ftp_date_key_park + interval '6' day then f2.cost_inc_vat end) cumsum_7_days,
+cast(sum (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203) and f2.order_date_key between a.ftp_date_key_park and a.ftp_date_key_park + interval '6' day then f2.cost_inc_vat end) as integer) cumsum_7_days,
 count(distinct (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203) and f2.order_date_key between a.ftp_date_key_park + interval '7' day and a.ftp_date_key_park + interval '13' day then f2.order_gk end)) rides_7_to_14_days,
-sum (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203) and f2.order_date_key between a.ftp_date_key_park + interval '7' day and a.ftp_date_key_park + interval '13' day then f2.cost_inc_vat end) cumsum_7_to_14_days,
+cast(sum (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203) and f2.order_date_key between a.ftp_date_key_park + interval '7' day and a.ftp_date_key_park + interval '13' day then f2.cost_inc_vat end) as integer) cumsum_7_to_14_days,
 count(distinct (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203) and f2.order_date_key between a.ftp_date_key_park + interval '14' day and a.ftp_date_key_park + interval '20' day then f2.order_gk end)) rides_15_to_21_days,
-sum (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203) and f2.order_date_key between a.ftp_date_key_park + interval '14' day and a.ftp_date_key_park + interval '20' day then f2.cost_inc_vat end) cumsum_15_to_21_days,
+cast(sum (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203) and f2.order_date_key between a.ftp_date_key_park + interval '14' day and a.ftp_date_key_park + interval '20' day then f2.cost_inc_vat end) as integer) cumsum_15_to_21_days,
 count(distinct (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203) and f2.order_date_key between a.ftp_date_key_park + interval '21' day and a.ftp_date_key_park + interval '29' day then f2.order_gk end)) rides_16_to_30_days,
-sum (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203) and f2.order_date_key between a.ftp_date_key_park + interval '21' day and a.ftp_date_key_park + interval '29' day then f2.cost_inc_vat end) cumsum_16_to_30_days
+cast(sum (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203) and f2.order_date_key between a.ftp_date_key_park + interval '21' day and a.ftp_date_key_park + interval '29' day then f2.cost_inc_vat end) as integer) cumsum_16_to_30_days
 
 
 
@@ -87,6 +87,11 @@ s.*,
     when cast (f3.cumsum as integer) = 1800 then (case when s.All_rides_30_days >= 30 then cast (f3.cumsum as integer) + 1500 else 0 end)
     when cast (f3.cumsum as integer) = 3300 then 0
     when cast (f3.cumsum as integer) = 4000 then 0
+    when ftp_date_key_park >= date '2021-02-15' then (case when s.All_rides_30_days between 5 and 9 then (case when cast (f3.cumsum as integer) >= 0 then 500 - cast (f3.cumsum as integer) else 500 end) else 0 end )
+    when ftp_date_key_park >= date '2021-02-15' then (case when s.All_rides_30_days between 10 and 24 then (case when cast (f3.cumsum as integer) >= 0 then 2000 - cast (f3.cumsum as integer) else 2000 end) else 0 end )
+    when ftp_date_key_park >= date '2021-02-15' then (case when s.All_rides_30_days between 25 and 39 then (case when cast (f3.cumsum as integer) >= 0 then 3000 - cast (f3.cumsum as integer) else 3000 end) else 0 end )
+    when ftp_date_key_park >= date '2021-02-15' then (case when s.All_rides_30_days >= 40 then (case when cast (f3.cumsum as integer) >= 0 then 4000 - cast (f3.cumsum as integer) else 4000 end) else 0 end )
+
     when ftp_date_key_park <= date '2020-12-20' then (case when s.All_rides_30_days between 5 and 14 then (case when cast (f3.cumsum as integer) >= 0 then 500 - cast (f3.cumsum as integer) else 500 end) else 0 end )
     when ftp_date_key_park <= date '2020-12-20' then (case when s.All_rides_30_days between 15 and 29 then 1800 else 0 end)
     when ftp_date_key_park <= date '2020-12-20' then (case when s.All_rides_30_days >= 30 then 3300 else 0 end)
@@ -100,10 +105,11 @@ s.*,
     else 0 end ) end) Cumsum
 
 from Payment s
-left join sheets.default.Payments_Scouts f3  on cast(f3.id as integer) = cast(substring(cast(s.driver_gk as varchar), 4) as integer)
+left join sheets.default.Payments_Scouts f3  on cast(f3.id as integer) = s.driver_gk
 left join sheets.default.leads_Scouts f4  on f4.phone = s.phone
 left join sheets.default.agent_Scouts f5  on f4.id_agent = f5.id_agent
 
 where 1=1
 
+order by s.ftp_date_key_park desc
 )
