@@ -25,7 +25,7 @@ d.ftp_date_key as ftp_date_key_all,
 min(f1.order_date_key) as ftp_date_key_park,
 min(f1.order_date_key) + interval '30' day FTR_plus_30days,
 max(f1.order_date_key) as ltp_date_key,
-sum (f1.cost_exc_vat) cost_total
+cast(sum (f1.cost_exc_vat) as integer ) cost_total
 
 from "emilia_gettdwh"."dwh_dim_drivers_v" d
 left join emilia_gettdwh.dwh_fact_drivers_orders_monetization_v f1 on d.driver_gk = f1.driver_gk
