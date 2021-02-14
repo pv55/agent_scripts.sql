@@ -72,8 +72,10 @@ and a.FTR_plus_30days >= date '2021-02-01'
 GROUP by a.city,a.driver_gk,a.cost_total,a.courier_type,a.phone,a.driver_name,a.driver_computed_rating,a.fleet_gk,a.driver_status,a.status,a.registration_date_key,a.ftp_date_key_all,a.ftp_date_key_park,a.FTR_plus_30days,a.ltp_date_key))
 
 (SELECT
-(case when s.city = 'МСК-Шараев' then 'Сергей Шараев' else f4.name_agent end) name_agent,
-(case when s.city = 'МСК-Шараев' then '900' else f4.utm_content end) utm_content,
+(case when s.city = 'МСК-Шараев' then 'Сергей Шараев' else f5.name end) name_agent,
+(case when s.city = 'МСК-Шараев' then '900' else f4.id_agent end) id_agent,
+(case when s.city = 'МСК-Шараев' then 'Сергей Шараев' else f5.Name_team end) Name_team,
+(case when s.city = 'МСК-Шараев' then '900' else f5.id_team end) id_team,
 s.*,
 (case when s.ltp_date_different_park >= date '1900-01-01' then (case when date_diff('day', s.ltp_date_different_park,s.ftp_date_key_park) <= 59 then 'NoReFTR' else 'ReFTR' end ) else 'FTR' end) as type_couriers,
 (case when f3.date_pay <> '' then date(f3.date_pay) end) as last_pay,
@@ -100,6 +102,8 @@ s.*,
 from Payment s
 left join sheets.default.Payments_Scouts f3  on cast(f3.id as integer) = cast(substring(cast(s.driver_gk as varchar), 4) as integer)
 left join sheets.default.leads_Scouts f4  on f4.phone = s.phone
+left join sheets.default.agent_Scouts f5  on f4.id_agent = f5.id_agent
+
 where 1=1
 
 )
