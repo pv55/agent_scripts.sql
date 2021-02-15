@@ -67,7 +67,7 @@ where 1=1
 and f2.country_key = 2
 and f2.order_status_key = 7
 and f2.cost_exc_vat >=1
-and a.FTR_plus_30days >= (now() - interval '1' day)
+and a.FTR_plus_30days >= (now() - interval '30' day)
 
 GROUP by a.city,a.driver_gk,a.cost_total,a.courier_type,a.phone,a.driver_name,a.driver_computed_rating,a.fleet_gk,a.driver_status,a.status,a.registration_date_key,a.ftp_date_key_all,a.ftp_date_key_park,a.FTR_plus_30days,a.ltp_date_key))
 
@@ -83,7 +83,7 @@ s.*,
 (case when  s.ltp_date_different_park >= date '1900-01-01'and date_diff('day', s.ltp_date_different_park,s.ftp_date_key_park) <= 59 and f3.date_pay is null  then 0
 
     else (case
-
+    when s.driver_gk in (2000634164,2000936189) then 0
     when cast (f3.cumsum as integer) = 1800 then (case when s.All_rides_30_days >= 30 then cast (f3.cumsum as integer) + 1500 else 0 end)
     when cast (f3.cumsum as integer) = 3300 then 0
     when cast (f3.cumsum as integer) = 4000 then 0
