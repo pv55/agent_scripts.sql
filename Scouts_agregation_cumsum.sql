@@ -76,10 +76,35 @@ GROUP by a.city,a.driver_gk,a.cost_total,a.courier_type,a.phone,a.driver_name,a.
 (case when s.city = 'МСК-Шараев' then '900' else f4.id_agent end) id_agent,
 (case when s.city = 'МСК-Шараев' then 'Сергей Шараев' else f5.Name_team end) Name_team,
 (case when s.city = 'МСК-Шараев' then '900' else f5.id_team end) id_team,
-s.*,
+s.city city,
+s.driver_gk driver_gk,
+s.phone phone,
+s.driver_name,
+s.driver_computed_rating rating,
+s.fleet_gk fleet_gk,
+s.driver_status driver_status,
+s.status status,
+f4.date_leads date_leads,
+s.registration_date_key,
+s.ftp_date_key_all ftp_date_key_all,
+s.ftp_date_key_park ftp_date_key_park,
+s.FTR_plus_30days FTR_plus_30days,
+s.ltp_date_key ltp_date_key,
+s.cost_total cost_total,
+s.All_rides_30_days All_rides_30_days,
+s.All_rides_total All_rides_total,
+s.ltp_date_different_park ltp_date_different_park,
+s.rides_7_days rides_7_days,
+s.cumsum_7_days cumsum_7_days,
+s.rides_8_to_14_days rides_8_to_14_days,
+s.cumsum_8_to_14_days cumsum_8_to_14_days,
+s.rides_15_to_21_days rides_15_to_21_days,
+s.cumsum_15_to_21_days cumsum_15_to_21_days,
+s.rides_16_to_30_days rides_16_to_30_days,
+s.cumsum_16_to_30_days cumsum_16_to_30_days,
 (case when s.ltp_date_different_park >= date '1900-01-01' then (case when date_diff('day', s.ltp_date_different_park,s.ftp_date_key_park) <= 59 then 'NoReFTR' else 'ReFTR' end ) else 'FTR' end) as type_couriers,
 (case when f3.date_pay <> '' then date(f3.date_pay) end) as last_pay,
-(case when f3.date_pay <> '' then cast (f3.cumsum as integer) else 0 end) as last_CumSum,
+(case when f3.date_pay <> '' then cast (f3.cumsum as integer)  else 0 end) as last_CumSum,
 (case when  s.ltp_date_different_park >= date '1900-01-01'and date_diff('day', s.ltp_date_different_park,s.ftp_date_key_park) <= 59 and f3.date_pay is null  then 0
 
     else (case
@@ -110,6 +135,7 @@ left join sheets.default.leads_Scouts f4  on f4.phone = s.phone
 left join sheets.default.agent_Scouts f5  on f4.id_agent = f5.id_agent
 
 where 1=1
+
 
 )
 order by ftp_date_key_park desc
