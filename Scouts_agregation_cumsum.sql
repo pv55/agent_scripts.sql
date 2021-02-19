@@ -131,7 +131,7 @@ s.cumsum_16_to_30_days cumsum_16_to_30_days,
     else 0 end ) end) Cumsum
 
 from Payment s
-left join sheets.default.Payments_Scouts f3  on cast(f3.id as integer) = s.driver_gk
+left join sheets.default.Payments_Scouts f3  on f3.id = cast(s.driver_gk as varchar )
 left join sheets.default.leads_Scouts f4  on f4.phone = s.phone
 left join sheets.default.agent_Scouts f5  on f4.id_agent = f5.id_agent
 
