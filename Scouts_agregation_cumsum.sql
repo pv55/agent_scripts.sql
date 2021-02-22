@@ -113,10 +113,10 @@ s.cumsum_16_to_30_days cumsum_16_to_30_days,
     when cast (f3.cumsum as integer) = 1800 then (case when s.All_rides_30_days >= 30 then cast (f3.cumsum as integer) + 1500 else 0 end)
     when cast (f3.cumsum as integer) = 3300 then 0
     when cast (f3.cumsum as integer) = 4000 then 0
-    when ftp_date_key_park >= date '2021-02-15' then (case when s.All_rides_30_days between 5 and 9 then (case when cast (f3.cumsum as integer) >= 0 then 500 - cast (f3.cumsum as integer) else 500 end) else 0 end )
-    when ftp_date_key_park >= date '2021-02-15' then (case when s.All_rides_30_days between 10 and 24 then (case when cast (f3.cumsum as integer) >= 0 then 2000 - cast (f3.cumsum as integer) else 2000 end) else 0 end )
-    when ftp_date_key_park >= date '2021-02-15' then (case when s.All_rides_30_days between 25 and 39 then (case when cast (f3.cumsum as integer) >= 0 then 3000 - cast (f3.cumsum as integer) else 3000 end) else 0 end )
-    when ftp_date_key_park >= date '2021-02-15' then (case when s.All_rides_30_days >= 40 then (case when cast (f3.cumsum as integer) >= 0 then 4000 - cast (f3.cumsum as integer) else 4000 end) else 0 end )
+    when ftp_date_key_park >= date '2021-02-15' and s.All_rides_30_days between 5 and 9 then  (case when cast (f3.cumsum as integer) >= 0 then 500 - cast (f3.cumsum as integer) else 500 end)
+    when ftp_date_key_park >= date '2021-02-15' and s.All_rides_30_days between 10 and 24  then (case when cast (f3.cumsum as integer) >= 0 then 2000 - cast (f3.cumsum as integer) else 2000 end)
+    when ftp_date_key_park >= date '2021-02-15' and s.All_rides_30_days between 25 and 39 then  (case when cast (f3.cumsum as integer) >= 0 then 3000 - cast (f3.cumsum as integer) else 3000 end)
+    when ftp_date_key_park >= date '2021-02-15' and s.All_rides_30_days >= 40   then  (case when cast (f3.cumsum as integer) >= 0 then 4000 - cast (f3.cumsum as integer) else 4000 end)
 
     when ftp_date_key_park <= date '2020-12-20' then (case when s.All_rides_30_days between 5 and 14 then (case when cast (f3.cumsum as integer) >= 0 then 500 - cast (f3.cumsum as integer) else 500 end) else 0 end )
     when ftp_date_key_park <= date '2020-12-20' then (case when s.All_rides_30_days between 15 and 29 then 1800 else 0 end)
