@@ -55,8 +55,12 @@ cast(sum (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200
 count(distinct (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203) and f2.order_date_key between a.ftp_date_key_park + interval '14' day and a.ftp_date_key_park + interval '20' day then f2.order_gk end)) rides_15_to_21_days,
 cast(sum (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203) and f2.order_date_key between a.ftp_date_key_park + interval '14' day and a.ftp_date_key_park + interval '20' day then f2.cost_inc_vat end) as integer) cumsum_15_to_21_days,
 count(distinct (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203) and f2.order_date_key between a.ftp_date_key_park + interval '21' day and a.ftp_date_key_park + interval '29' day then f2.order_gk end)) rides_16_to_30_days,
-cast(sum (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203) and f2.order_date_key between a.ftp_date_key_park + interval '21' day and a.ftp_date_key_park + interval '29' day then f2.cost_inc_vat end) as integer) cumsum_16_to_30_days
-
+cast(sum (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203) and f2.order_date_key between a.ftp_date_key_park + interval '21' day and a.ftp_date_key_park + interval '29' day then f2.cost_inc_vat end) as integer) cumsum_16_to_30_days,
+(case
+    when a.ftp_date_key_park  between date '2020-12-01' and date '2020-12-19' then 1
+    when a.ftp_date_key_park  between date '2020-12-20' and date '2021-02-14' then 2
+    when a.ftp_date_key_park  >= date '2021-02-15' then 3
+    end) as type_bonus
 
 
 from couriers a
@@ -109,26 +113,27 @@ s.cumsum_16_to_30_days cumsum_16_to_30_days,
 (case when  s.ltp_date_different_park >= date '1900-01-01'and date_diff('day', s.ltp_date_different_park,s.ftp_date_key_park) <= 59 and f3.date_pay is null  then 0
 
     else (case
-    when s.driver_gk in (2000634164,2000936189) then 0
-    when cast (f3.cumsum as integer) = 1800 then (case when s.All_rides_30_days >= 30 then cast (f3.cumsum as integer) + 1500 else 0 end)
-    when cast (f3.cumsum as integer) = 3300 then 0
-    when cast (f3.cumsum as integer) = 4000 then 0
-    when ftp_date_key_park >= date '2021-02-15' and s.All_rides_30_days between 5 and 9 then  (case when cast (f3.cumsum as integer) >= 0 then 500 - cast (f3.cumsum as integer) else 500 end)
-    when ftp_date_key_park >= date '2021-02-15' and s.All_rides_30_days between 10 and 24  then (case when cast (f3.cumsum as integer) >= 0 then 2000 - cast (f3.cumsum as integer) else 2000 end)
-    when ftp_date_key_park >= date '2021-02-15' and s.All_rides_30_days between 25 and 39 then  (case when cast (f3.cumsum as integer) >= 0 then 3000 - cast (f3.cumsum as integer) else 3000 end)
-    when ftp_date_key_park >= date '2021-02-15' and s.All_rides_30_days >= 40   then  (case when cast (f3.cumsum as integer) >= 0 then 4000 - cast (f3.cumsum as integer) else 4000 end)
-
-    when ftp_date_key_park <= date '2020-12-20' then (case when s.All_rides_30_days between 5 and 14 then (case when cast (f3.cumsum as integer) >= 0 then 500 - cast (f3.cumsum as integer) else 500 end) else 0 end )
-    when ftp_date_key_park <= date '2020-12-20' then (case when s.All_rides_30_days between 15 and 29 then 1800 else 0 end)
-    when ftp_date_key_park <= date '2020-12-20' then (case when s.All_rides_30_days >= 30 then 3300 else 0 end)
+    when s.driver_gk in (2000634164,2000936189,2000923715) then 0
     when s.All_rides_30_days <= 4 then 0
+    when cast (f3.cumsum as integer) = 4000 or cast (f3.cumsum as integer) = 3300 then 0
+    when s.type_bonus = 1 and s.All_rides_30_days between 5 and 14 then (case when cast (f3.cumsum as integer) >= 0 then 500 - cast (f3.cumsum as integer) else 500 end)
+    when s.type_bonus = 1 and s.All_rides_30_days between 15 and 29 then (case when cast (f3.cumsum as integer) >= 0 then 1800 - cast (f3.cumsum as integer) else 1800 end)
+    when s.type_bonus = 1 and s.All_rides_30_days >= 30 then (case when cast (f3.cumsum as integer) >= 0 then 3300 - cast (f3.cumsum as integer) else 3000 end)
 
-    when s.All_rides_30_days between 5 and 14 then (case when cast (f3.cumsum as integer) >= 0 then 500 - cast (f3.cumsum as integer) else 500 end)
-    when s.All_rides_30_days between 15 and 29 then (case when cast (f3.cumsum as integer) >= 0 then 2100 - cast (f3.cumsum as integer) else 2100 end)
-    when s.All_rides_30_days between 15 and 29 then (case when cast (f3.cumsum as integer) >= 0 then 2100 - cast (f3.cumsum as integer) else 2100 end)
-    when s.All_rides_30_days >= 30 then (case when cast (f3.cumsum as integer) >= 0 then 4000 - cast (f3.cumsum as integer) else 4000 end)
+    when s.type_bonus = 2 and s.All_rides_30_days between 5 and 14 then (case when cast (f3.cumsum as integer) >= 0 then 500 - cast (f3.cumsum as integer) else 500 end)
+    when s.type_bonus = 2 and s.All_rides_30_days between 15 and 29 then (case when cast (f3.cumsum as integer) >= 0 then 2100 - cast (f3.cumsum as integer) else 2100 end)
+    when s.type_bonus = 2 and s.All_rides_30_days >= 30 then (case when cast (f3.cumsum as integer) >= 0 then 4000 - cast (f3.cumsum as integer) else 4000 end)
 
-    else 0 end ) end) Cumsum
+
+    when s.type_bonus = 3 and s.All_rides_30_days between 5 and 9 then (case when cast (f3.cumsum as integer) >= 0 then 500 - cast (f3.cumsum as integer) else 500 end)
+    when s.type_bonus = 3 and s.All_rides_30_days between 10 and 24 then (case when cast (f3.cumsum as integer) >= 0 then 2000 - cast (f3.cumsum as integer) else 2000 end)
+    when s.type_bonus = 3 and s.All_rides_30_days between 25 and 39 then (case when cast (f3.cumsum as integer) >= 0 then 3000 - cast (f3.cumsum as integer) else 3000 end)
+    when s.type_bonus = 3 and s.All_rides_30_days >= 40 then (case when cast (f3.cumsum as integer) >= 0 then 4000 - cast (f3.cumsum as integer) else 4000 end)
+
+
+    else 0 end ) end) Cumsum,
+s.type_bonus
+
 
 from Payment s
 left join sheets.default.Payments_Scouts f3  on f3.id = cast(s.driver_gk as varchar )
