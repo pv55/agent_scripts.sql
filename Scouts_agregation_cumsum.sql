@@ -1,3 +1,6 @@
+
+WITH Payment_final AS (
+
 WITH Payment AS (
 
 WITH couriers AS (
@@ -143,5 +146,76 @@ left join sheets.default.agent_Scouts f5  on f4.id_agent = f5.id_agent
 where 1=1
 
 
-)
+))
+
+(SELECT w.*,
+(case when w.last_CumSum >= 500 or w.type_couriers = 'NoReFTR' or w.Cumsum = 0  then 0 else 1000 end) a1,
+(case
+
+    when w.type_bonus = 2 and w.All_rides_30_days >=15 and w.last_CumSum < 2100 and w.Cumsum >0   then 1000
+    when w.type_bonus = 3 and w.All_rides_30_days >=10 and w.last_CumSum < 2000 and w.Cumsum >0    then 700
+
+  else 0 end) a2,
+
+(case
+
+    when w.type_bonus = 2 and w.All_rides_30_days >=30 and w.last_CumSum < 4000 and w.Cumsum >0     then 1500
+    when w.type_bonus = 3 and w.All_rides_30_days >=25 and w.last_CumSum < 3000 and w.Cumsum >0   then 800
+
+  else 0 end) a3,
+
+(case
+
+    when w.type_bonus = 3 and w.All_rides_30_days >=40 and w.last_CumSum < 4000 and w.Cumsum >0    then 1000
+
+  else 0 end) a4,
+
+(case when w.last_CumSum >= 500 or w.type_couriers = 'NoReFTR' or w.Cumsum = 0  then 0 else 200 end) tl,
+
+(case
+
+    when w.type_bonus = 2 and w.All_rides_30_days >=15 and w.last_CumSum < 2100 and w.Cumsum >0   then 300
+    when w.type_bonus = 3 and w.All_rides_30_days >=10 and w.last_CumSum < 2000 and w.Cumsum >0    then 300
+
+  else 0 end) stl,
+
+(case when w.last_CumSum >= 500 or w.type_couriers = 'NoReFTR' or w.Cumsum = 0  then 0 else 500 end) GETT1,
+
+(case
+
+    when w.type_bonus = 2 and w.All_rides_30_days >=15 and w.last_CumSum < 2100 and w.Cumsum >0   then 1600
+    when w.type_bonus = 3 and w.All_rides_30_days >=10 and w.last_CumSum < 2000 and w.Cumsum >0    then 1500
+
+  else 0 end) GETT2,
+
+(case
+
+    when w.type_bonus = 2 and w.All_rides_30_days >=30 and w.last_CumSum < 4000 and w.Cumsum >0     then 1900
+    when w.type_bonus = 3 and w.All_rides_30_days >=25 and w.last_CumSum < 3000 and w.Cumsum >0   then 1000
+
+  else 0 end) GETT3,
+
+(case
+
+    when w.type_bonus = 3 and w.All_rides_30_days >=40 and w.last_CumSum < 4000 and w.Cumsum >0    then 1000
+
+  else 0 end) GETT4,
+
+(case
+
+    when w.type_bonus = 2  and w.last_CumSum = 500  then 700
+    when w.type_bonus = 2  and w.last_CumSum = 2100  then 400
+    when w.type_bonus = 2  and w.last_CumSum = 4000  then 0
+
+    when w.type_bonus = 3  and w.last_CumSum = 500  then 700
+    when w.type_bonus = 3  and w.last_CumSum = 2000  then 200
+    when w.type_bonus = 3  and w.last_CumSum = 3000  then 0
+    when w.type_bonus = 3  and w.last_CumSum = 4000  then 0
+
+
+  else 0 end) Overpayment
+
+from Payment_final w)
+
 order by ftp_date_key_park desc
+
