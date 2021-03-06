@@ -84,7 +84,7 @@ GROUP by a.city,a.driver_gk,a.cost_total,a.courier_type,a.phone,a.driver_name,a.
 
 (SELECT
 (case when s.city = 'МСК-Шараев' then 'Сергей Шараев' else f5.name end) name_agent,
-(case when s.city = 'МСК-Шараев' then '900' else f4.id_agent end) id_agent,
+(case when s.city = 'МСК-Шараев' then '900' else f5.id_agent end) id_agent,
 (case when s.city = 'МСК-Шараев' then 'Сергей Шараев' else f5.Name_team end) Name_team,
 (case when s.city = 'МСК-Шараев' then '900' else f5.id_team end) id_team,
 s.city city,
