@@ -146,7 +146,7 @@ from Payment s
 left join sheets.default.Payments_Scouts f3  on f3.id = cast(s.driver_gk as varchar )
 left join sheets.default.leads_Scouts f4  on f4.phone = s.phone
 left join sheets.default.leads_Scouts2 f6  on f6.phone = s.phone
-left join sheets.default.agent_Scouts f5  on f4.id_agent = f5.id_agent and f6.id_agent = f5.id_agent
+left join sheets.default.agent_Scouts f5  on f4.id_agent = f5.id_agent or f6.id_agent = f5.id_agent
 
 where 1=1
 
