@@ -39,7 +39,7 @@ d.registration_date_key as registration_date_key,
 -- В "emilia_gettdwh"."dwh_dim_drivers_v" d хранится первая поездка в GD.
 d.ftp_date_key as ftp_date_key_all,
       
--- В emilia_gettdwh.dwh_fact_drivers_orders_monetization_v f1 хранится первая поездка в парке.
+-- В emilia_gettdwh.dwh_fact_drivers_orders_monetization_v f1 берем первую поездку в этом флите.
 min(f1.order_date_key) as ftp_date_key_park,
       
       
@@ -65,6 +65,9 @@ Group by d.driver_gk,(case when d.courier_type is null then 'car' else d.courier
 count(distinct(case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550,200014202,200014203,200016266,200016359,200016267,200016265,200017204) then (case when f2.order_date_key between a.ftp_date_key_park and a.FTR_plus_30days then f2.order_gk end)  end)) as All_rides_30_days,
 
 count(distinct(case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550,200014202,200014203,200016266,200016359,200016267,200016265,200017204) then f2.order_gk  end)) as All_rides_total,
+               
+-- Если первая поездка в GD не равна первой поездке в парке, то это ReFTR. Вводим параметр = дата в другом парке
+-- Берем максимальную дату, т.е. последнюю дату поездки, т.е. последнюю дату, когда курьер катал в другом парке
 max (case when a.ftp_date_key_all <> a.ftp_date_key_park then (case when f2.order_date_key  < a.ftp_date_key_park  then f2.order_date_key end) end ) ltp_date_different_park,
 
 
@@ -124,6 +127,9 @@ s.rides_15_to_21_days rides_15_to_21_days,
 s.cumsum_15_to_21_days cumsum_15_to_21_days,
 s.rides_16_to_30_days rides_16_to_30_days,
 s.cumsum_16_to_30_days cumsum_16_to_30_days,
+
+ -- если у курьера, есть дата последней поездки в другом парке date_diff между последней поездкой в другом парке и первой поездкой в парке <= 59, то это NoReFTR
+ 
 (case when s.ltp_date_different_park >= date '1900-01-01' then (case when date_diff('day', s.ltp_date_different_park,s.ftp_date_key_park) <= 59 then 'NoReFTR' else 'ReFTR' end ) else 'FTR' end) as type_couriers,
 s.type_bonus
 
