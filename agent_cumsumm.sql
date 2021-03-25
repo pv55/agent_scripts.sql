@@ -35,8 +35,14 @@ d.driver_status as driver_status,
 
 
 d.registration_date_key as registration_date_key,
+      
+-- В "emilia_gettdwh"."dwh_dim_drivers_v" d хранится первая поездка в GD.
 d.ftp_date_key as ftp_date_key_all,
+      
+-- В emilia_gettdwh.dwh_fact_drivers_orders_monetization_v f1 хранится первая поездка в парке.
 min(f1.order_date_key) as ftp_date_key_park,
+      
+      
 min(f1.order_date_key) + interval '30' day FTR_plus_30days,
 max(f1.order_date_key) as ltp_date_key,
 cast(sum (f1.cost_exc_vat) as integer ) cost_total
