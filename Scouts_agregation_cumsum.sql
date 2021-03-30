@@ -11,13 +11,14 @@ select
       when f1.fleet_gk = 200017342 then 'Спб-Дептакси'
       when f1.fleet_gk = 200017205 then 'Спб-Дептакси'
       when f1.fleet_gk = 200017203 then 'МСК-Дептакси'
-      when f1.fleet_gk = 200017203 then 'МСК-Дептакси'
       when f1.fleet_gk = 200017430 then 'МСК-Лайттакси'
       when f1.fleet_gk = 200017524 then 'Казань-Лайттакси'
       when f1.fleet_gk = 200017523 then 'Спб-Лайттакси'
       when f1.fleet_gk = 200017517 then 'МСК-Лайттакси'
       when f1.fleet_gk = 200017548 then 'НН-Лайттакси'
       when f1.fleet_gk = 200017550 then 'РНД-Лайттакси'
+      when f1.fleet_gk = 200017739 then 'Влг-Лайттакси'
+      when f1.fleet_gk = 200017738 then 'СРТ-Лайттакси'
       end ) city,
 d.driver_gk as driver_gk,
 d.phone as phone,
@@ -41,7 +42,7 @@ left join emilia_gettdwh.dwh_fact_drivers_orders_monetization_v f1 on d.driver_g
 
 
 where 1=1
-and f1.fleet_gk in ( 200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550 )
+and f1.fleet_gk in ( 200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550,200017739,200017738 )
 and f1.country_key = 2
 and f1.order_status_key = 7
 and f1.cost_exc_vat >=1
@@ -51,24 +52,26 @@ and f1.cost_exc_vat >=1
 Group by d.driver_gk,(case when d.courier_type is null then 'car' else d.courier_type end ),d.phone,d.driver_name,d.driver_computed_rating,f1.fleet_gk,d.driver_status,d.registration_date_key,d.ftp_date_key,(case when d.car_number = 'ЧС' then 'ЧС' end),(case when d.frozen_comment = 'Unknown' then '' else d.frozen_comment end ))
 
 (SELECT a.*,
-count(distinct(case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550) then (case when f2.order_date_key between a.ftp_date_key_park and a.FTR_plus_30days then f2.order_gk end)  end)) as All_rides_30_days,
+count(distinct(case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550,200017739,200017738) then (case when f2.order_date_key between a.ftp_date_key_park and a.FTR_plus_30days then f2.order_gk end)  end)) as All_rides_30_days,
 
-count(distinct(case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550) then f2.order_gk  end)) as All_rides_total,
+count(distinct(case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550,200017739,200017738) then f2.order_gk  end)) as All_rides_total,
 max (case when a.ftp_date_key_all <> a.ftp_date_key_park then (case when f2.order_date_key  < a.ftp_date_key_park  then f2.order_date_key end) end ) ltp_date_different_park,
 
 
-count(distinct (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550) and f2.order_date_key between a.ftp_date_key_park and a.ftp_date_key_park + interval '6' day then f2.order_gk end)) rides_7_days,
-cast(sum (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550) and f2.order_date_key between a.ftp_date_key_park and a.ftp_date_key_park + interval '6' day then f2.cost_inc_vat end) as integer) cumsum_7_days,
-count(distinct (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550) and f2.order_date_key between a.ftp_date_key_park + interval '7' day and a.ftp_date_key_park + interval '13' day then f2.order_gk end)) rides_8_to_14_days,
-cast(sum (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550) and f2.order_date_key between a.ftp_date_key_park + interval '7' day and a.ftp_date_key_park + interval '13' day then f2.cost_inc_vat end) as integer) cumsum_8_to_14_days,
-count(distinct (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550) and f2.order_date_key between a.ftp_date_key_park + interval '14' day and a.ftp_date_key_park + interval '20' day then f2.order_gk end)) rides_15_to_21_days,
-cast(sum (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550) and f2.order_date_key between a.ftp_date_key_park + interval '14' day and a.ftp_date_key_park + interval '20' day then f2.cost_inc_vat end) as integer) cumsum_15_to_21_days,
-count(distinct (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550) and f2.order_date_key between a.ftp_date_key_park + interval '21' day and a.ftp_date_key_park + interval '29' day then f2.order_gk end)) rides_16_to_30_days,
-cast(sum (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550) and f2.order_date_key between a.ftp_date_key_park + interval '21' day and a.ftp_date_key_park + interval '29' day then f2.cost_inc_vat end) as integer) cumsum_16_to_30_days,
+count(distinct (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550,200017739,200017738) and f2.order_date_key between a.ftp_date_key_park and a.ftp_date_key_park + interval '6' day then f2.order_gk end)) rides_7_days,
+cast(sum (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550,200017739,200017738) and f2.order_date_key between a.ftp_date_key_park and a.ftp_date_key_park + interval '6' day then f2.cost_inc_vat end) as integer) cumsum_7_days,
+count(distinct (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550,200017739,200017738) and f2.order_date_key between a.ftp_date_key_park + interval '7' day and a.ftp_date_key_park + interval '13' day then f2.order_gk end)) rides_8_to_14_days,
+cast(sum (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550,200017739,200017738) and f2.order_date_key between a.ftp_date_key_park + interval '7' day and a.ftp_date_key_park + interval '13' day then f2.cost_inc_vat end) as integer) cumsum_8_to_14_days,
+count(distinct (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550,200017739,200017738) and f2.order_date_key between a.ftp_date_key_park + interval '14' day and a.ftp_date_key_park + interval '20' day then f2.order_gk end)) rides_15_to_21_days,
+cast(sum (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550,200017739,200017738) and f2.order_date_key between a.ftp_date_key_park + interval '14' day and a.ftp_date_key_park + interval '20' day then f2.cost_inc_vat end) as integer) cumsum_15_to_21_days,
+count(distinct (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550,200017739,200017738) and f2.order_date_key between a.ftp_date_key_park + interval '21' day and a.ftp_date_key_park + interval '29' day then f2.order_gk end)) rides_16_to_30_days,
+cast(sum (case when f2.fleet_gk in (200017083, 200017177,200017412,200017342,200017205,200017203, 200017524,200017523,200017517,200017430,200017548,200017550,200017739,200017738) and f2.order_date_key between a.ftp_date_key_park + interval '21' day and a.ftp_date_key_park + interval '29' day then f2.cost_inc_vat end) as integer) cumsum_16_to_30_days,
 (case
     when a.ftp_date_key_park  between date '2020-12-01' and date '2020-12-19' then 1
     when a.ftp_date_key_park  between date '2020-12-20' and date '2021-02-14' then 2
-    when a.ftp_date_key_park  >= date '2021-02-15' then 3
+    when a.ftp_date_key_park  between date '2020-02-15' and date '2021-03-28'  then 3
+    when a.city in('МСК-Дептакси','МСК-Шараев','МСК-Лайттакси') and a.ftp_date_key_park  >= date '2021-03-29'  then 4
+    when a.city in('Казань-Дептакси','Спб-Дептакси','Казань-Лайттакси','Спб-Лайттакси','НН-Лайттакси','РНД-Лайттакси','Влг-Лайттакси','СРТ-Лайттакси') and a.ftp_date_key_park  >= date '2021-03-29' then 5
     end) as type_bonus
 
 
@@ -139,6 +142,12 @@ s.cumsum_16_to_30_days cumsum_16_to_30_days,
     when s.type_bonus = 3 and s.All_rides_30_days between 25 and 39 then (case when cast (f3.cumsum as integer) >= 0 then 3000 - cast (f3.cumsum as integer) else 3000 end)
     when s.type_bonus = 3 and s.All_rides_30_days >= 40 then (case when cast (f3.cumsum as integer) >= 0 then 4000 - cast (f3.cumsum as integer) else 4000 end)
 
+    when s.type_bonus = 4 then 0
+
+    when s.type_bonus = 5 and s.All_rides_30_days between 5 and 9 then (case when cast (f3.cumsum as integer) >= 0 then 500 - cast (f3.cumsum as integer) else 500 end)
+    when s.type_bonus = 5 and s.All_rides_30_days between 10 and 19 then (case when cast (f3.cumsum as integer) >= 0 then 2000 - cast (f3.cumsum as integer) else 2000 end)
+    when s.type_bonus = 5 and s.All_rides_30_days between 20 and 29 then (case when cast (f3.cumsum as integer) >= 0 then 3000 - cast (f3.cumsum as integer) else 3000 end)
+    when s.type_bonus = 5 and s.All_rides_30_days >= 30 then (case when cast (f3.cumsum as integer) >= 0 then 4000 - cast (f3.cumsum as integer) else 4000 end)
 
     else 0 end ) end) Cumsum,
 s.type_bonus
@@ -161,6 +170,7 @@ where 1=1
 
     when w.type_bonus = 2 and w.All_rides_30_days >=15 and w.last_CumSum < 2100 and w.Cumsum >0   then 1000
     when w.type_bonus = 3 and w.All_rides_30_days >=10 and w.last_CumSum < 2000 and w.Cumsum >0    then 700
+    when w.type_bonus = 5 and w.All_rides_30_days >=10 and w.last_CumSum < 2000 and w.Cumsum >0    then 700
 
   else 0 end) a2,
 
@@ -168,12 +178,14 @@ where 1=1
 
     when w.type_bonus = 2 and w.All_rides_30_days >=30 and w.last_CumSum < 4000 and w.Cumsum >0     then 1500
     when w.type_bonus = 3 and w.All_rides_30_days >=25 and w.last_CumSum < 3000 and w.Cumsum >0   then 800
+    when w.type_bonus = 5 and w.All_rides_30_days >=20 and w.last_CumSum < 3000 and w.Cumsum >0   then 800
 
   else 0 end) a3,
 
 (case
 
     when w.type_bonus = 3 and w.All_rides_30_days >=40 and w.last_CumSum < 4000 and w.Cumsum >0    then 1000
+    when w.type_bonus = 5 and w.All_rides_30_days >=30 and w.last_CumSum < 4000 and w.Cumsum >0    then 1000
 
   else 0 end) a4,
 
@@ -183,6 +195,7 @@ where 1=1
 
     when w.type_bonus = 2 and w.All_rides_30_days >=15 and w.last_CumSum < 2100 and w.Cumsum >0   then 300
     when w.type_bonus = 3 and w.All_rides_30_days >=10 and w.last_CumSum < 2000 and w.Cumsum >0    then 300
+    when w.type_bonus = 5 and w.All_rides_30_days >=10 and w.last_CumSum < 2000 and w.Cumsum >0    then 300
 
   else 0 end) stl,
 
@@ -192,6 +205,7 @@ where 1=1
 
     when w.type_bonus = 2 and w.All_rides_30_days >=15 and w.last_CumSum < 2100 and w.Cumsum >0   then 1600
     when w.type_bonus = 3 and w.All_rides_30_days >=10 and w.last_CumSum < 2000 and w.Cumsum >0    then 1500
+    when w.type_bonus = 5 and w.All_rides_30_days >=10 and w.last_CumSum < 2000 and w.Cumsum >0    then 1500
 
   else 0 end) GETT2,
 
@@ -199,12 +213,14 @@ where 1=1
 
     when w.type_bonus = 2 and w.All_rides_30_days >=30 and w.last_CumSum < 4000 and w.Cumsum >0     then 1900
     when w.type_bonus = 3 and w.All_rides_30_days >=25 and w.last_CumSum < 3000 and w.Cumsum >0   then 1000
+    when w.type_bonus = 5 and w.All_rides_30_days >=20 and w.last_CumSum < 3000 and w.Cumsum >0   then 1000
 
   else 0 end) GETT3,
 
 (case
 
     when w.type_bonus = 3 and w.All_rides_30_days >=40 and w.last_CumSum < 4000 and w.Cumsum >0    then 1000
+    when w.type_bonus = 5 and w.All_rides_30_days >=30 and w.last_CumSum < 4000 and w.Cumsum >0    then 1000
 
   else 0 end) GETT4,
 
@@ -218,6 +234,11 @@ where 1=1
     when w.type_bonus = 3  and w.last_CumSum = 2000  then 200
     when w.type_bonus = 3  and w.last_CumSum = 3000  then 0
     when w.type_bonus = 3  and w.last_CumSum = 4000  then 0
+
+    when w.type_bonus = 5  and w.last_CumSum = 500  then 700
+    when w.type_bonus = 5  and w.last_CumSum = 2000  then 200
+    when w.type_bonus = 5  and w.last_CumSum = 3000  then 0
+    when w.type_bonus = 5  and w.last_CumSum = 4000  then 0
 
 
   else 0 end) Overpayment
