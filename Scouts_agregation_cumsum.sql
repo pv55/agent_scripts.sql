@@ -129,7 +129,7 @@ where 1=1
 and f2.country_key = 2
 and f2.order_status_key = 7
 and f2.cost_exc_vat >=1
---and a.FTR_plus_30days >= (now() - interval '30' day)
+and a.FTR_plus_30days >= (now() - interval '30' day)
 
 GROUP by a.city,a.driver_gk,a.cost_total,a.courier_type,a.phone,a.driver_name,a.driver_computed_rating,a.fleet_gk,a.driver_status,a.status,a.registration_date_key,a.ftp_date_key_all,a.ftp_date_key_park,a.FTR_plus_30days,a.ltp_date_key))
 
