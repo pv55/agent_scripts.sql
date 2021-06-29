@@ -26,6 +26,7 @@ select
 
 
 
+
       end ) city,
 d.driver_gk as driver_gk,
 d.phone as phone,
@@ -173,7 +174,7 @@ s.cumsum_16_to_30_days cumsum_16_to_30_days,
     when cast (f3.cumsum as integer) = 4000 or (cast (f3.cumsum as integer) = 3000 and s.type_bonus = 4) then 0
 
 
-    when s.type_bonus = 4 and s.All_rides_30_days between 5 and 9 then (case when cast (f3.cumsum as integer) >= 0 then 500 - cast (f3.cumsum as integer) else 500 end)
+    when s.type_bonus = 4 and s.All_rides_30_days between 5 and 19 then (case when cast (f3.cumsum as integer) >= 0 then 500 - cast (f3.cumsum as integer) else 500 end)
     when s.type_bonus = 4 and s.All_rides_30_days between 20 and 39 then (case when cast (f3.cumsum as integer) >= 0 then 1500 - cast (f3.cumsum as integer) else 1500 end)
     when s.type_bonus = 4 and s.All_rides_30_days >= 40 then (case when cast (f3.cumsum as integer) >= 0 then 3000 - cast (f3.cumsum as integer) else 3000 end)
 
